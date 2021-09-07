@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <mark>使用 slot 来定义插槽，分类：默认插槽、具名插槽、作用域插槽</mark><br>
+        <mark>默认插槽：组件嵌套中实际上就是使用了子组件的 template 作为默认插槽</mark><br>
+        <mark>具名插槽：带有名称的 template </mark><br>
+        <mark>作用域插槽：可以接收子组件传递的值 </mark><br>
+        <mark>定义的插槽未在模板中使用时，将使用默认值，尝试删除第二个 template 查看效果</mark><br>
+        <todo-list>
+            <todo-item v-for="item in items" v-bind:key="item.title" @delete="handleDelete" :title="item.title"
+                :del="item.del">
+                <!-- SLOT SYNTAX - Vue 2.5 and earlier
+                <span slot="prefix">PREFIX</span>
+                <span slot="suffix">SUFFIX</span>
+                -->
+                <!-- SLOT SYNTAX - Vue 2.6+ -->
+                <template v-slot:prefix>
+                    <span>PREFIX</span>
+                </template>
+                <template v-slot:suffix="{value}">
+                    <span>SUFFIX {{value}}</span>
+                </template>
+            </todo-item>
+        </todo-list>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        Vue.component('todo-item', {
+            props: {
+                title: String,
+                del: {
+                    type: Boolean,
+                    default: false
+                }
+            },
+            data: function () {
+                return {
+                    value: Math.random()
+                }
+            },
+            template: `
+                <li>
+                    <slot name="prefix"></slot>
+                    <span v-if="!del"> {{title}} </span>
+                    <span v-else style="text-decoration: line-through;"> {{title}} </span>
+                    <slot name="suffix" :value="value">DEFAULT</slot>
+                    <button v-show="!del" @click="handleClick">Delete</button>
+                </li>
+            `,
+            methods: {
+                handleClick() {
+                    console.log('You have clicked delete button.')
+                    this.$emit('delete', this.title)
+                }
+            }
+        })
+
+        Vue.component('todo-list', {
+            template: `
+                <ul>
+                    <slot></slot>
+                </ul>`
+        })
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                items: [{
+                    title: 'Course 1',
+                    del: true
+                }, {
+                    title: 'Course 2',
+                    del: false
+                }]
+            },
+            methods: {
+                handleDelete(val) {
+                    console.log('Delete item', val)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

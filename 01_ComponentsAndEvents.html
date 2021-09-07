@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <div id="app">
         <mark>使用 mustache 写法来声明式渲染页面内容</mark>
-        <div>{{message}}</div>              <!-- 声明式渲染 -->
-        <br><hr>
+        <div>{{message}}</div>
+        <br>
+        <hr>
 
-        <mark v-bind:id="message">使用 v-bind 进行数据绑定，简写 v-bind:id="example" -> :id="example"</mark>     <!-- V-BIND 数据绑定 -->
-        <div :id="message"></div>           <!-- V-BIND 简写 -->
-        <br><hr>
+        <mark v-bind:id="message">使用 v-bind 进行数据绑定，简写 v-bind:id="example" -> :id="example"</mark>
+        <div :id="message"></div>
+        <br>
+        <hr>
 
-        <mark>v-if 与 v-show 控制内容是否渲染，但 v-show 一定会生成 DOM ，只是将其设置为 display: none 。尝试在控制台输入 vm.item.del = true ，观察按钮 DOM 变化</mark>
+        <mark>v-if 与 v-show 控制内容是否渲染。v-show 一定会生成 DOM ，只是将其设置为 display: none。在控制台输入 vm.item.del = true ，观察 DOM 变化</mark>
         <ul>
             <li>
-                <span v-if="!item.del"> {{item.title}} </span>      <!-- V-IF 条件渲染 -->
+                <span v-if="!item.del"> {{item.title}} </span>
                 <span v-else style="text-decoration: line-through;"> {{item.title}} </span>
-                <button v-show="!item.del">Delete</button>          <!-- V-SHOW 约同V-IF，一定生成DOM，选择性DISPLAY -->
+                <button v-show="!item.del">Delete</button>
             </li>
         </ul>
-        <br><hr>
+        <br>
+        <hr>
 
         <mark>使用 v-for 来遍历数据</mark>
         <ul>
@@ -34,18 +39,25 @@
                 <button v-show="!item.del">Delete</button>
             </li>
         </ul>
-        <br><hr>
+        <br>
+        <hr>
 
         <mark>使用 Vue.component 注册组件</mark>
         <ul>
             <todo-item v-for="item in items" v-bind:key="item.title" :title="item.title" :del="item.del"></todo-item>
         </ul>
-        <br><hr>
+        <br>
+        <hr>
 
-        <mark>组件可以嵌套</mark>
+        <mark>组件可以嵌套。使用 v-on:event 或 @event 创建事件，使用 this.$emit 传递事件</mark>
         <todo-list></todo-list>
+        <br>
+        <hr>
+
+        <mark>props 是属性， data 是状态。props 能够将值传递给子组件，而 data 是组件内的私有内存</mark>
+
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script>
         Vue.component('todo-item', {
@@ -60,24 +72,27 @@
                 <li>
                     <span v-if="!del"> {{title}} </span>
                     <span v-else style="text-decoration: line-through;"> {{title}} </span>
-                    <button v-show="!del">Delete</button>
+                    <button v-show="!del" @click="handleClick">Delete</button>
                 </li>
             `,
             data: function () {
                 return {}
             },
             methods: {
-
+                handleClick() {
+                    console.log('You have clicked delete button.')
+                    this.$emit('delete', this.title)
+                }
             }
         })
-        
+
         Vue.component('todo-list', {
             template: `
                 <ul>
-                    <todo-item v-for="item in items" v-bind:key="item.title" :title="item.title" :del="item.del"></todo-item>
+                    <todo-item v-for="item in items" v-bind:key="item.title" @delete="handleDelete" :title="item.title" :del="item.del"></todo-item>
                 </ul>
             `,
-            data: function() {
+            data: function () {
                 return {
                     items: [{
                         title: 'Course 1',
@@ -87,6 +102,11 @@
                         del: false
                     }]
                 }
+            },
+            methods: {
+                handleDelete(val) {
+                    console.log('Delete item', val)
+                }
             }
         })
 
@@ -94,6 +114,7 @@
             el: '#app',
             data: {
                 message: 'Hello World!',
+                count: 0,
                 item: {
                     title: 'Course 1',
                     del: false
@@ -109,4 +130,5 @@
         })
     </script>
 </body>
+
 </html>
