@@ -1,18 +1,9 @@
 <template>
   <div id="app">
-    <mark>使用 slot 来定义插槽，分类：默认插槽、具名插槽、作用域插槽</mark><br>
-    <mark>默认插槽：组件嵌套中实际上就是使用了子组件的 template 作为默认插槽</mark><br>
-    <mark>具名插槽：带有名称的 template </mark><br>
-    <mark>作用域插槽：可以接收子组件传递的值 </mark><br>
-    <mark>定义的插槽未在模板中使用时，将使用默认值，尝试删除第二个 template 查看效果</mark><br>
+    <div><strong>使用 单文件组件 形式重新实现此前的项目</strong></div>
     <todo-list>
         <todo-item v-for="item in items" v-bind:key="item.title" @delete="handleDelete" :title="item.title"
             :del="item.del">
-            <!-- SLOT SYNTAX - Vue 2.5 and earlier
-            <span slot="prefix">PREFIX</span>
-            <span slot="suffix">SUFFIX</span>
-            -->
-            <!-- SLOT SYNTAX - Vue 2.6+ -->
             <template v-slot:prefix>
                 <span>PREFIX</span>
             </template>
@@ -21,6 +12,16 @@
             </template>
         </todo-item>
     </todo-list>
+    <hr>
+    <div><strong>使用 V-MODEL 实现数据双向绑定</strong></div>
+    <div> {{message}} </div>
+    <input v-model="message">
+    <br><br>
+    <div><strong>V-MODEL 的本质是语法糖，负责监听用户的输入以更新数据。它还可以处理以下输入元素：</strong></div>
+    <div><strong>text/textarea —— :value @input</strong></div>
+    <div><strong>checkbox/radio —— :checked @change</strong></div>
+    <div><strong>select —— :value @input</strong></div>
+    <input :value="message" @input="handleChange">
   </div>
 </template>
 
@@ -38,6 +39,7 @@ export default {
   },
   data() {
     return {
+      message: 'Hello Vue!',
       items: [{
                 title: 'Course 1',
                 del: true
@@ -50,6 +52,9 @@ export default {
   methods: {
       handleDelete(val) {
           console.log('Delete item', val)
+      },
+      handleChange(e) {
+          this.message = e.target.value
       }
   }
 }
