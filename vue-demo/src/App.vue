@@ -22,6 +22,16 @@
     <div><strong>checkbox/radio —— :checked @change</strong></div>
     <div><strong>select —— :value @input</strong></div>
     <input :value="message" @input="handleChange">
+    <hr>
+    <div><strong>使用 COMPUTED 计算属性</strong></div>
+    <div>{{reverseMessage1}}</div>
+    <div>{{reverseMessage2()}}</div>
+    <button @click="() => $forceUpdate()">Force Update</button>
+    <hr>
+    <div><strong>使用 WATCH 侦听器</strong></div>
+    <div><strong>可以声明 deep 来侦听子元素的数据变化</strong></div>
+    <div><strong>作用与 COMPUTED 大致相同，优先使用 COMPUTED </strong></div>
+    <div>{{reverseMessage}}</div>
   </div>
 </template>
 
@@ -49,12 +59,28 @@ export default {
               }]
     } 
   },
+  computed: {
+      reverseMessage1: function() {
+          console.log("Update reverseMessage1 using computed");
+          return this.message.split("").reverse().join("");
+      }
+  },
+  watch: {
+      message: function(val, oldVal) {
+          console.log("Detected change! %s -> %s", oldVal, val)
+          this.reverseMessage = this.message.split("").reverse().join("");
+      }
+  },
   methods: {
       handleDelete(val) {
           console.log('Delete item', val)
       },
       handleChange(e) {
           this.message = e.target.value
+      },
+      reverseMessage2: function() {
+          console.log("Update reverseMessage2 using method");
+          return this.message.split("").reverse().join("");
       }
   }
 }
